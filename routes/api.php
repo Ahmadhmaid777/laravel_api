@@ -29,7 +29,11 @@ Route::get('/league/filter',[\App\Http\Controllers\LeagueController::class,'filt
 Route::middleware(['auth:admin','scopes:admin'])->group(function (){
     Route::get('/users',[UserController::class,'index']);
     Route::post('/country/create',[\App\Http\Controllers\CountryController::class,'store']);
+    Route::post('/country/update/{id}',[\App\Http\Controllers\CountryController::class,'update']);
+    Route::post('/country/delete/{id}',[\App\Http\Controllers\CountryController::class,'destroy']);
     Route::post('/league/create',[\App\Http\Controllers\LeagueController::class,'store']);
+    Route::post('/league/update/{id}',[\App\Http\Controllers\LeagueController::class,'update']);
+    Route::post('/league/delete/{id}',[\App\Http\Controllers\LeagueController::class,'destroy']);
     Route::post('/club/create',[\App\Http\Controllers\ClubController::class,'store']);
     Route::post('/club/update/{id}',[\App\Http\Controllers\ClubController::class,'update']);
     Route::post('/club/delete/{id}',[\App\Http\Controllers\ClubController::class,'destroy']);

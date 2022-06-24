@@ -6,6 +6,7 @@ use App\Http\Resources\LeagueResource;
 use App\Http\ResponseTrait;
 use App\Models\Country;
 use App\Models\League;
+use App\Models\MatchModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -51,5 +52,32 @@ class LeagueController extends Controller
         $league->country_key = $request->country_key;
         $league->save();
         return response()->json($league, 200);
+    }
+
+    public function update(Request $request,$id){
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'country_key' => 'required|max:4'
+        ],);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->getMessageBag()], 400);
+        }
+        $league=League::Find($id);
+        $league->name = $request->name;
+        $league->country_key = $request->country_key;
+        $league->update();
+        return response()->json($league, 200);
+    }
+
+    public function destroy($id)
+    {
+        $data = League::destroy($id);
+        if ($data == 0) {
+            return response()->json(["message" => "delete League fail",], 404);
+
+        } else {
+            return response()->json(["message" => "League deleted",], 200);
+        }
     }
 }
