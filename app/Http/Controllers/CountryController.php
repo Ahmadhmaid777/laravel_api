@@ -19,11 +19,14 @@ class CountryController extends Controller
     public function store(Request $request){
     $validator=Validator::make($request->all(),[
         'name'=>'required|max:255',
-        'key'=>'required'
+        'key'=>'required|unique:countries'
     ]);
-    if ($validator->fails()){
-        return response()->json(['error'=>$validator->getMessageBag()],400);
-    }
+
+        if ($validator->fails()) {
+            $msg = "تاكد من البيانات المدخلة";
+            $data = $validator->errors();
+            return response()->json(compact('msg', 'data'), 402);
+        }
     $country=new Country();
     $country->name=$request->name;
     $country->key=$request->key;

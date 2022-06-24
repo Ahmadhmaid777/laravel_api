@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Http\Resources\CountryResource;
+use App\Http\Resources\MatchCollection;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,5 +26,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         CountryResource::withoutWrapping();
+        MatchCollection::withoutWrapping();
     }
 }

@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Exceptions;
-
+use Illuminate\Database\QueryException;
+use Laravel\Passport\Exceptions\MissingScopeException;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -36,6 +39,7 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
+
     /**
      * Register the exception handling callbacks for the application.
      *
@@ -43,8 +47,25 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            return response()->json(["errors"=>'incorrect route'],Response::HTTP_NOT_FOUND);
+        });
+
+        $this->renderable(function (MissingScopeException  $e, $request) {
+            return response()->json(["errors"=>'this user can not access this route'],Response::HTTP_NOT_FOUND);
+        });
+
+        $this->renderable(function (QueryException  $e, $request) {
+
+            if (str_contains($e->getMessage(),'Duplicate entry')){
+                return response()->json(["errors"=>"Duplicate unique entry "],Response::HTTP_NOT_FOUND);
+
+            }
+        });
+
+
+        $this->reportable(function (Exception $e) {
+
         });
     }
 }

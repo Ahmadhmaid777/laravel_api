@@ -22,7 +22,7 @@ class LoginController extends Controller
 
         $user =User::Where('email',$request->email)->first();
         if (!$user){
-            return response()->json(["message"=>"عذار هذا الايميل غير صحيح"],401);
+            return response()->json(["message"=>"عذرا هذا الايميل غير صحيح"],401);
         }
 
         if (Hash::check($request->password,$user->password)){
@@ -31,7 +31,7 @@ class LoginController extends Controller
             return  response($response,200);
 
         }else{
-            return response()->json(["message"=>"عذار  كلمة المرور غير صحيحة"],401);
+            return response()->json(["message"=>"عذرا  كلمة المرور غير صحيحة"],401);
 
         }
 
@@ -48,17 +48,17 @@ class LoginController extends Controller
 
         $user =Admin::Where('email',$request->email)->first();
         if (!$user){
-            return response()->json(["message"=>"عذار هذا الايميل غير صحيح"],401);
+            return response()->json(["message"=>"عذرا هذا الايميل غير صحيح"],401);
         }
 
         if (Hash::check($request->password,$user->password)){
-            config(['auth.guards.api.provider' => 'api-admin']);
-            $token=($user->createToken('laravel password Grant Admin',['api-admin']))->accessToken;
+            config(['auth.guards.api.provider' => 'admin']);
+            $token=($user->createToken('laravel password Grant Admin',['admin']))->accessToken;
             $response=['token'=>$token];
             return  response($response,200);
 
         }else{
-            return response()->json(["message"=>"عذار  كلمة المرور غير صحيحة"],401);
+            return response()->json(["message"=>"عذرا  كلمة المرور غير صحيحة"],401);
 
         }
 

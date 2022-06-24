@@ -24,11 +24,13 @@ class LeagueController extends Controller
     public function filterLeagues(Request $request){
         $leagues = League::select('leagues.*')
             ->join('countries','leagues.country_key','=','countries.key')
-            ->when($request, function ($query) use ($request) {
-                $query->where('countries.name', 'Like', '%' . $request->country_name . '%')
-                    ->orWhere('countries.key', 'Like', '%' . $request->country_name . '%');
-            }
-            )
+            ->when($request->country_name, function ($query) use ($request) {
+                $query->where('countries.name', 'Like', '%' . $request->country_name . '%');
+            })->when($request->name, function ($query) use ($request) {
+                $query->where('leagues.name', 'Like', '%' . $request->name.'%');
+            }) ->when($request->country_key, function ($query) use ($request) {
+                $query->where('countries.key', 'Like', '%' . $request->country_key . '%');
+            })
             ->get();
         return $this->fetchData('success', 200, LeagueResource::collection($leagues->unique('id')));
 

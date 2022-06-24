@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MatchCollection;
 use App\Models\Club;
 use App\Models\League;
 use App\Models\MatchModel;
@@ -24,8 +25,9 @@ class MatchController extends Controller
      */
     public function index()
     {
-        $matches = MatchModel::all();
-        return $this->fetchData('success', 200, MatchResource::collection($matches));
+        $matches = MatchModel::paginate(20);
+
+        return response()->json(new MatchCollection($matches));
     }
 
     public function filterMatches(Request $request)
@@ -34,7 +36,7 @@ class MatchController extends Controller
 
         $matches = MatchModel::select('matches.*')
             ->join('leagues', 'leagues.id', '=', 'matches.league_id')
-            ->when($request->name, function ($query) use ($request) {
+            ->when($request->leagueName, function ($query) use ($request) {
                 $query->where('leagues.name', 'Like', '%' . $request->leagueName . '%');
             }
             )->when($request->match_date, function ($query) use ($request) {
@@ -45,9 +47,9 @@ class MatchController extends Controller
 
             })
             ->with('league', 'home_club', 'away_club')
-            ->get();
-        $matches = $matches->unique('id');
-        return $this->fetchData('success', 200, MatchResource::collection($matches));
+            ->paginate(20);
+
+        return response()->json(new MatchCollection($matches));
 
     }
 
@@ -81,7 +83,8 @@ class MatchController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->all()]);
+            return response()->json([
+                'error' => $validator->errors()->all()]);
         }
 
         $home_team = Club::Find($request->home_team_id);

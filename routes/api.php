@@ -26,7 +26,7 @@ Route::get('/matches',[\App\Http\Controllers\MatchController::class,'index']);
 Route::get('/matches/filter',[\App\Http\Controllers\MatchController::class,'filterMatches']);
 Route::get('/league/filter',[\App\Http\Controllers\LeagueController::class,'filterLeagues']);
 
-Route::middleware(['auth:api-admin','scopes:admin'])->group(function (){
+Route::middleware(['auth:admin','scopes:admin'])->group(function (){
     Route::get('/users',[UserController::class,'index']);
     Route::post('/country/create',[\App\Http\Controllers\CountryController::class,'store']);
     Route::post('/league/create',[\App\Http\Controllers\LeagueController::class,'store']);
